@@ -3,6 +3,9 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 
+const flightRoutes = require('./routes/flightRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
+
 const app = express();
 
 // ─── Middleware ───────────────────────────────────────
@@ -11,9 +14,18 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ─── Health check route ───────────────────────────────
+// ─── Routes ──────────────────────────────────────────
+app.use('/api/flights', flightRoutes);
+app.use('/api/bookings', bookingRoutes);
+
+// ─── Health check ─────────────────────────────────────
 app.get('/', (req, res) => {
   res.json({ message: 'Flight Booking API is running ✈️' });
+});
+
+// ─── 404 handler ──────────────────────────────────────
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: 'Route not found' });
 });
 
 // ─── Start server ─────────────────────────────────────
